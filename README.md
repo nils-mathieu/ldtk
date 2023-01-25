@@ -77,3 +77,5 @@ name = "ldtk"
 ...
 ```
 
+Here, the `/bin/sh -c "echo abc | rev"` process has been invoked.
+
