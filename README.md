@@ -15,7 +15,7 @@ This program is only supported on Linux.
 ### Using A Pre-Built Binary
 
 If you are using Linux and a x86_64 CPU, you can use the pre-built binary available in github
-[releases](https://github.com/nils-mathieu/ldtk/releases/tag/v0.1).
+[releases](https://github.com/nils-mathieu/ldtk/releases).
 
 ### Building From Source
 
