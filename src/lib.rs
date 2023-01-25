@@ -40,7 +40,12 @@ static ENTRY_POINT: extern "C" fn() = init;
 
 /// The entry point of our library.
 extern "C" fn init() {
-    let result = match Action::from_env().unwrap_or_default() {
+    let action = match Action::from_env() {
+        Some(action) => action,
+        None => return,
+    };
+
+    let result = match action {
         Action::Mute => actions::do_mute(),
         Action::Spawn(cmd) => actions::do_spawn(cmd),
     };

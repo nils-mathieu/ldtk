@@ -50,6 +50,8 @@ LD_PRELOAD=path/to/libldtk.so cat Cargo.toml
 LDTK looks for the `LDTK_ACTION` environment variable to determine what to do. Here is the list of
 supported actions.
 
+When no `LDTK_ACTION` is specified, or when the action is not recognized, nothing happens.
+
 ### Mute
 
 When **LDTK_ACTION** is `"mute"`, LDTK hijacks libc's `write` function and make it return 1

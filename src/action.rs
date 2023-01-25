@@ -41,10 +41,3 @@ impl<'a> Action<'a> {
         }
     }
 }
-
-impl<'a> Default for Action<'a> {
-    #[inline(always)]
-    fn default() -> Self {
-        Self::Mute
-    }
-}
