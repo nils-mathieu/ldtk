@@ -17,3 +17,4 @@ crate-type = [ "cdylib" ]
 [dependencies]
 libc = { version = "0.2", default-features = false }
 sentinel = { version = "0.3", default-features = false, features = [ "libc" ] }
+bitflags = { version = "1" }

@@ -1,7 +1,9 @@
 #![no_std]
 
-use sentinel::sslice;
+use action::Action;
 
+mod action;
+mod actions;
 mod c;
 
 /// Handles a panic coming from our crate.
@@ -24,5 +26,9 @@ static ENTRY_POINT: extern "C" fn() = init;
 
 /// The entry point of our library.
 extern "C" fn init() {
-    let _ = c::puts(sslice!("Hello, World!"));
+    match Action::from_env().unwrap_or_default() {
+        Action::Mute => {
+            let _ = actions::do_mute();
+        }
+    }
 }
