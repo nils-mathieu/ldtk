@@ -2,11 +2,9 @@
 
 A simple tool to hijack processes when they start.
 
-## How it works
-
-This program expects to be loaded as a dynamic library using the `LD_PRELOAD` environment variable
-within a shell (such as Bash or Zsh). In its initialization code, the library will mess with the
-hijacked program's memory, files and functions.
+LDTK expects to be loaded as a dynamic library using the `LD_PRELOAD` environment variable within
+a shell (such as Bash or Zsh). In its initialization code, the library will mess with the hijacked
+program's memory and functions.
 
 # Tutorial
 
@@ -14,8 +12,15 @@ hijacked program's memory, files and functions.
 
 This program is only supported on Linux.
 
-At the moment, you can only build the binary from source. You will need Cargo and a recent-enough
-Rust toolchain.
+### Using A Pre-Built Binary
+
+If you are using Linux and a x86_64 CPU, you can use the pre-built binary available in github
+[releases](https://github.com/nils-mathieu/ldtk/releases/tag/v0.1).
+
+### Building From Source
+
+To build LDTK from source, you'll need `cargo` (and a recent-enough version of the Rust toolchain),
+as well as `nasm` to compile `.asm` files.
 
 ```bash
 git clone git@github.com:nils-mathieu/ldtk.git
