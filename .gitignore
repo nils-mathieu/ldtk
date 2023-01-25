@@ -1,4 +1,9 @@
+# Garbage Files
 /target
 /Cargo.lock
 
 /src/actions/mute_write
+
+# IDEs
+/.helix
+/.vscode
