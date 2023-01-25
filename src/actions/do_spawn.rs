@@ -1,13 +1,13 @@
 use crate::c;
-use crate::c::{Errno, Fork, Strs};
+use crate::c::{Errno, Fork, Pid, Strs};
 
 use sentinel::{sslice, SSlice};
 
 /// Spawns a command and waits until it completes.
 pub fn do_spawn(command: &SSlice<u8>) -> Result<(), Errno> {
-    match c::fork()? {
-        Fork::Parent { child_pid } => {
-            c::waitpid(child_pid)?;
+    match Pid::fork()? {
+        Fork::Parent { child } => {
+            child.wait()?;
             Ok(())
         }
         Fork::Child => {

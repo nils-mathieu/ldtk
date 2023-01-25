@@ -2,6 +2,7 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 
 use action::Action;
+use c::Fd;
 
 mod action;
 mod actions;
@@ -12,8 +13,8 @@ mod c;
 /// On release builds, this function does nothing.
 fn print_error(err: &[u8]) {
     if cfg!(debug_assertions) {
-        let _ = c::write(c::STDERR, b"ldtk: ");
-        let _ = c::write(c::STDERR, err);
+        let _ = Fd::STDERR.write(b"ldtk: ");
+        let _ = Fd::STDERR.write(err);
     }
 }
 

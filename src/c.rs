@@ -129,54 +129,60 @@ pub fn execve(path: &SSlice<u8>, args: Strs, env: Strs) -> Result<Infallible, Er
     Err(Errno::last_error())
 }
 
-/// A process identifier.
-pub type Pid = libc::pid_t;
-
 /// The result of a successful [`fork`] operation.
 #[derive(Debug, Clone, Copy)]
 pub enum Fork {
     /// The current process is the parent.
-    Parent { child_pid: Pid },
+    Parent { child: Pid },
     /// The current process is the child.
     Child,
 }
 
-/// Duplicates the current process.
-pub fn fork() -> Result<Fork, Errno> {
-    let pid = unsafe { libc::fork() };
+/// A simple wrapper around a Process IDentifier.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Pid(libc::pid_t);
 
-    match pid {
-        -1 => Err(Errno::last_error()),
-        0 => Ok(Fork::Child),
-        child_pid => Ok(Fork::Parent { child_pid }),
+impl Pid {
+    /// Duplicates the current process.
+    pub fn fork() -> Result<Fork, Errno> {
+        let pid = unsafe { libc::fork() };
+
+        match pid {
+            -1 => Err(Errno::last_error()),
+            0 => Ok(Fork::Child),
+            child => Ok(Fork::Parent { child: Self(child) }),
+        }
+    }
+
+    /// Waits until the process exits.
+    pub fn wait(self) -> Result<u32, Errno> {
+        let mut status = 0;
+        let ret = unsafe { libc::waitpid(self.0, &mut status, 0) };
+
+        if ret == -1 {
+            Err(Errno::last_error())
+        } else {
+            Ok(status as u32)
+        }
     }
 }
-
-/// Waits until a child process exits.
-pub fn waitpid(pid: Pid) -> Result<u32, Errno> {
-    let mut status = 0;
-    let ret = unsafe { libc::waitpid(pid, &mut status, 0) };
-
-    if ret == -1 {
-        Err(Errno::last_error())
-    } else {
-        Ok(status as u32)
-    }
-}
-
-/// The standard error output.
-pub const STDERR: Fd = libc::STDERR_FILENO;
 
 /// A file descriptor.
-pub type Fd = libc::c_int;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Fd(libc::c_int);
 
-/// Writes some data to `fd`.
-pub fn write(fd: Fd, data: &[u8]) -> Result<usize, Errno> {
-    let count = unsafe { libc::write(fd, data.as_ptr() as _, data.len()) };
+impl Fd {
+    /// The FD usually used for the standard error output.
+    pub const STDERR: Self = Self(libc::STDERR_FILENO);
 
-    if count == -1 {
-        Err(Errno::last_error())
-    } else {
-        Ok(count as usize)
+    /// Writes some data to this file descriptor.
+    pub fn write(self, data: &[u8]) -> Result<usize, Errno> {
+        let count = unsafe { libc::write(self.0, data.as_ptr() as _, data.len()) };
+
+        if count == -1 {
+            Err(Errno::last_error())
+        } else {
+            Ok(count as usize)
+        }
     }
 }
