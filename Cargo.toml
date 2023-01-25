@@ -1,0 +1,19 @@
+[package]
+name = "ldtk"
+version = "0.0.1"
+edition = "2021"
+authors = [ "Nils Mathieu <nils.mathieu.contact@gmail.com>" ]
+description = "a tool to hijack programs"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[lib]
+crate-type = [ "cdylib" ]
+
+[dependencies]
+libc = { version = "0.2", default-features = false }
+sentinel = { version = "0.3", default-features = false, features = [ "libc" ] }
