@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.3
+
+- The `"mute"` action did not mute the standard error output. This is now fixed!
+
 ## v0.1.2
 
 - The `"mute"` action is no longer the default. When nothing is specified in `LDTK_ACTION`, the
