@@ -79,3 +79,27 @@ name = "ldtk"
 
 Here, the `/bin/sh -c "echo abc | rev"` process has been invoked.
 
+## Examples
+
+Mute all programs.
+
+```bash
+export LD_PRELOAD=path/to/lib ldtk.so
+export LDTK_ACTION=mute
+```
+
+Print a message before every command.
+
+```bash
+export LD_PRELOAD=path/to/lib ldtk.so
+export LDTK_ACTION=spawn
+export LDTK_SPAWN="echo i'm in ur address space"
+```
+
+Wait a bit before actually starting.
+
+```bash
+export LD_PRELOAD=path/to/lib ldtk.so
+export LDTK_ACTION=spawn
+export LDTK_SPAWN="sleep 1"
+```
