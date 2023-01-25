@@ -1,6 +1,6 @@
 [package]
 name = "ldtk"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2021"
 authors = [ "Nils Mathieu <nils.mathieu.contact@gmail.com>" ]
 description = "a tool to hijack programs"
