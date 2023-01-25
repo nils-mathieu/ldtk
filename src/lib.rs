@@ -24,9 +24,11 @@ fn print_error(err: &[u8]) {
 ///
 /// This is a bug. This function should normally *never* be called.
 #[panic_handler]
-fn handle_panic(_info: &core::panic::PanicInfo) -> ! {
-    // TODO:
-    //  Print the error message in debug mode and nothing in release mode.
+fn handle_panic(info: &core::panic::PanicInfo) -> ! {
+    if let Some(msg) = info.payload().downcast_ref::<&str>() {
+        print_error(msg.as_bytes());
+    }
+
     c::abort();
 }
 
