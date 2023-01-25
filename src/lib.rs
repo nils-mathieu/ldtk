@@ -7,6 +7,16 @@ mod action;
 mod actions;
 mod c;
 
+/// Writes an error message to the standard error.
+///
+/// On release builds, this function does nothing.
+fn print_error(err: &[u8]) {
+    if cfg!(debug_assertions) {
+        let _ = c::write(c::STDERR, b"ldtk: ");
+        let _ = c::write(c::STDERR, err);
+    }
+}
+
 /// Handles a panic coming from our crate.
 ///
 /// # Notes
@@ -27,9 +37,13 @@ static ENTRY_POINT: extern "C" fn() = init;
 
 /// The entry point of our library.
 extern "C" fn init() {
-    match Action::from_env().unwrap_or_default() {
-        Action::Mute => {
-            let _ = actions::do_mute();
-        }
+    let result = match Action::from_env().unwrap_or_default() {
+        Action::Mute => actions::do_mute(),
+        Action::Spawn(cmd) => actions::do_spawn(cmd),
+    };
+
+    match result {
+        Ok(()) => (),
+        Err(err) => print_error(err.description().as_slice()),
     }
 }

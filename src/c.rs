@@ -1,6 +1,7 @@
 //! This module provides safe wrappers to `libc`'s functions.
 
 use core::cell::Cell;
+use core::convert::Infallible;
 
 use sentinel::SSlice;
 
@@ -30,6 +31,12 @@ impl Errno {
     #[inline]
     pub fn make_last_error(self) {
         Self::cell().set(self.0)
+    }
+
+    /// Returns a description of the error.
+    #[inline]
+    pub fn description(self) -> &'static SSlice<u8> {
+        unsafe { SSlice::from_ptr(libc::strerror(self.0) as _) }
     }
 }
 
@@ -110,5 +117,66 @@ pub unsafe fn mprotect(addr: *mut u8, len: usize, flags: Prot) -> Result<(), Err
         Err(Errno::last_error())
     } else {
         Ok(())
+    }
+}
+
+/// A null-terminated list of null-terminated strings.
+pub type Strs<'a> = &'a SSlice<Option<&'a SSlice<u8>>>;
+
+/// Replaces the current process with another.
+pub fn execve(path: &SSlice<u8>, args: Strs, env: Strs) -> Result<Infallible, Errno> {
+    unsafe { libc::execve(path.as_ptr() as _, args.as_ptr() as _, env.as_ptr() as _) };
+    Err(Errno::last_error())
+}
+
+/// A process identifier.
+pub type Pid = libc::pid_t;
+
+/// The result of a successful [`fork`] operation.
+#[derive(Debug, Clone, Copy)]
+pub enum Fork {
+    /// The current process is the parent.
+    Parent { child_pid: Pid },
+    /// The current process is the child.
+    Child,
+}
+
+/// Duplicates the current process.
+pub fn fork() -> Result<Fork, Errno> {
+    let pid = unsafe { libc::fork() };
+
+    match pid {
+        -1 => Err(Errno::last_error()),
+        0 => Ok(Fork::Child),
+        child_pid => Ok(Fork::Parent { child_pid }),
+    }
+}
+
+/// Waits until a child process exits.
+pub fn waitpid(pid: Pid) -> Result<u32, Errno> {
+    let mut status = 0;
+    let ret = unsafe { libc::waitpid(pid, &mut status, 0) };
+
+    if ret == -1 {
+        Err(Errno::last_error())
+    } else {
+        Ok(status as u32)
+    }
+}
+
+/// The standard error output.
+pub const STDERR: Fd = libc::STDERR_FILENO;
+
+/// A file descriptor.
+pub type Fd = libc::c_int;
+
+/// Writes some data to `fd`.
+pub fn write(fd: Fd, data: &[u8]) -> Result<usize, Errno> {
+    let count = unsafe { libc::write(fd, data.as_ptr() as _, data.len()) };
+
+    if count == -1 {
+        Err(Errno::last_error())
+    } else {
+        Ok(count as usize)
     }
 }

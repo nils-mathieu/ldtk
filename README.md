@@ -47,11 +47,33 @@ LD_PRELOAD=path/to/libldtk.so cat Cargo.toml
 
 ## Configuration
 
-LDTK looks for the `LDTK_ACTION` environment variable to determine what to do. At the moment,
-however, only one action is supported.
+LDTK looks for the `LDTK_ACTION` environment variable to determine what to do. Here is the list of
+supported actions.
 
 ### Mute
 
 When **LDTK_ACTION** is `"mute"`, LDTK hijacks libc's `write` function and make it return 1
 inconditionally, ensuring that nothing is ever displayed to the standard input (or in any other
 file, for that matter).
+
+Example:
+
+```txt
+ >_ LD_PRELOAD=path/to/libldtk.so LDTK_ACTION=mute cat Cargo.toml
+```
+
+## Spawn
+
+When **LDTK_ACTION** is `"spawn"`, LDTK simply invoke a command using the `/bin/sh` shell. The
+executed command is taken from the **LDTK_SPAWN** environment variable.
+
+Example:
+
+```
+ >_ LD_PRELOAD=path/to/libldtk.so LDTK_ACTION=spawn LDTK_SPAWN="echo abc | rev" cat Cargo.toml
+cba
+[package]
+name = "ldtk"
+...
+```
+
