@@ -1,4 +1,5 @@
 #![no_std]
+#![forbid(unsafe_op_in_unsafe_fn)]
 
 use action::Action;
 
@@ -19,7 +20,7 @@ fn handle_panic(_info: &core::panic::PanicInfo) -> ! {
 }
 
 /// This static variable will be added to the `.init_array` section, requesting the C runtime to
-/// call it before the hijacked normal `main` function.
+/// call it before the hijacked program's normal `main` function.
 #[link_section = ".init_array"]
 #[used]
 static ENTRY_POINT: extern "C" fn() = init;
