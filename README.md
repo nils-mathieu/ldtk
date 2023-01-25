@@ -54,9 +54,11 @@ When no `LDTK_ACTION` is specified, or when the action is not recognized, nothin
 
 ### Mute
 
-When **LDTK_ACTION** is `"mute"`, LDTK hijacks libc's `write` function and make it return 1
-inconditionally, ensuring that nothing is ever displayed to the standard input (or in any other
-file, for that matter).
+When **LDTK_ACTION** is `"mute"`, LDTK hijacks libc's `write` function and make it do nothing for
+file descriptors 1 and 2 (standard output and standard error), ensuring that nothing is ever
+displayed to the terminal.
+
+Writing to files is intentionally preserved, however.
 
 Example:
 

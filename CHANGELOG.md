@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.2
+
+- The `"mute"` action is no longer the default. When nothing is specified in `LDTK_ACTION`, the
+library does nothing.
+
+- The `"mute"` action now preserves the hijacked program's ability to write to files. Only the
+standard output and standard error output are removed.
+
 ## v0.1.1
 
 - Added the `"spawn"` action, which simply spawns a command (using the `sh` shell) before handing
